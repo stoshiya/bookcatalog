@@ -10,6 +10,7 @@
     "jade": "*",
     "request": "*",
     "cheerio": "*",
+    "async": "*",
     "apac": "*",
     "passport": "*",
     "passport-twitter" : "*"

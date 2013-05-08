@@ -4,3 +4,15 @@ block content
   h1= title
   p Welcome, #{profile.username}
   img(src='#{profile.photo}')
+
+  div oreilly.co.jp
+    ul
+      each item in oreilly
+        li
+          a(href='#{item.href}') #{item.title}
+
+  div computerbook.jp
+    ul
+      each item in computerbookjp
+        li
+          a(href='#{item.href}') #{item.title}
