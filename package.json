@@ -1,0 +1,21 @@
+{
+  "name": "bookcatalog",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node app"
+  },
+  "dependencies": {
+    "express": "3.x",
+    "jade": "*",
+    "request": "*",
+    "cheerio": "*",
+    "apac": "*",
+    "passport": "*",
+    "passport-twitter" : "*"
+  },
+  "engines": {
+    "node": "0.10.x",
+    "npm": "1.2.x"
+  }
+}
