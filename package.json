@@ -11,7 +11,7 @@
     "request": "*",
     "cheerio": "*",
     "async": "*",
-    "apac": "*",
+    "apac": "https://github.com/dmcquay/node-apac/tarball/master",
     "passport": "*",
     "passport-twitter" : "*"
   },

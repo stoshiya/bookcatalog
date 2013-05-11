@@ -5,6 +5,12 @@ block content
   p Welcome, #{profile.username}
   img(src='#{profile.photo}')
 
+  div amazon.co.jp
+    ul
+      each item in amazon
+        li
+          a(href='#{item.href}') #{item.title}
+
   div oreilly.co.jp
     ul
       each item in oreilly

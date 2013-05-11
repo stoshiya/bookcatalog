@@ -1,14 +1,11 @@
 # Book Catalog
 
-## Set enviroment variables
+## Getting Started
 
     % export TWITTER_CONSUMER_KEY=....
     % export TWITTER_CONSUMER_SECRET=....
-
-    % export AWS_ID=....     (Optional)
-    % export AWS_SECRET=.... (Optional)
-    % export http_proxy=.... (Optional)
-
-## Start application
+    % export AWS_ID=....
+    % export AWS_SECRET=....
+    % export AWS_ASSOCIATE_ID=....
 
     % node app.js

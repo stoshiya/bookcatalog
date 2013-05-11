@@ -52,7 +52,7 @@ app.configure('development', function(){
   app.use(express.errorHandler());
 });
 
-app.get('/', ensureAuthenticated, routes.index);
+app.get('/:index?', ensureAuthenticated, routes.index);
 
 app.get('/auth/twitter', passport.authenticate('twitter'));
 app.get('/auth/twitter/callback', passport.authenticate('twitter', {
