@@ -3,7 +3,8 @@ var express = require('express')
   , http = require('http')
   , path = require('path')
   , passport = require('passport')
-  , TwitterStrategy = require('passport-twitter').Strategy;
+  , TwitterStrategy = require('passport-twitter').Strategy
+  , GithubStrategy = require('passport-github').Strategy;
 
 passport.serializeUser(function(user, done) {
   done(null, user);
@@ -13,18 +14,51 @@ passport.deserializeUser(function(obj, done) {
   done(null, obj);
 });
 
+var twitterKey     = process.env.TWITTER_CONSUMER_KEY;
+var twitterSecret  = process.env.TWITTER_CONSUMER_SECRET;
+var githubClientId = process.env.GITHUB_CLIENT_ID;
+var githubSecret   = process.env.GITHUB_CLIENT_SECRET;
+
+if (!twitterKey || !twitterSecret) {
+  console.error('require key and secret for twitter.');
+  process.exit(1);
+}
+
+if (!githubClientId || !githubSecret) {
+  console.error('require id and secret for github.');
+  process.exit(1);
+}
+
 passport.use(new TwitterStrategy({
-    consumerKey: process.env.TWITTER_CONSUMER_KEY,
-    consumerSecret: process.env.TWITTER_CONSUMER_SECRET
+    consumerKey:    twitterKey,
+    consumerSecret: twitterSecret
   },
   function(token, tokenSecret, profile, done) {
     passport.session.accessToken = token;
     passport.session.profile = profile;
     process.nextTick(function() {
       done(null, {
-        id: profile.id,
+        id:       profile.id,
         username: profile.username,
-        photo: profile.photos[0].value
+        photo:    profile.photos[0].value
+      });
+    });
+  }
+));
+
+passport.use(new GithubStrategy({
+    clientID:     githubClientId,
+    clientSecret: githubSecret
+  },
+  function(token, tokenSecret, profile, done) {
+    passport.session.accessToken = token;
+    passport.session.profile = profile;
+    console.log(profile);
+    process.nextTick(function() {
+      done(null, {
+        id:       profile.id,
+        username: profile.username,
+        photo:    profile._json.avatar_url
       });
     });
   }
@@ -32,7 +66,7 @@ passport.use(new TwitterStrategy({
 
 var app = express();
 
-app.configure(function(){
+app.configure(function() {
   app.set('port', process.env.PORT || 3000);
   app.set('views', __dirname + '/views');
   app.set('view engine', 'jade');
@@ -52,18 +86,32 @@ app.configure('development', function(){
   app.use(express.errorHandler());
 });
 
-app.get('/:index?', ensureAuthenticated, routes.index);
+app.get('/:index?', ensureGithubAuthenticated, routes.index);
+//app.get('/login', routes.login);
 
-app.get('/auth/twitter', passport.authenticate('twitter'));
+app.get('/auth/twitter',   passport.authenticate('twitter'));
 app.get('/auth/twitter/callback', passport.authenticate('twitter', {
   successRedirect: '/',
   failureRedirect: '/login' // TODO
 }));
 
+app.get('/auth/github',          passport.authenticate('github'));
+app.get('/auth/github/callback', passport.authenticate('github', {
+  successRedirect: '/',
+  failureRedirect: '/login' // TODO
+}));
 
-function ensureAuthenticated(req, res, next) {
+function ensureTwitterAuthenticated(req, res, next) {
   if (!req.isAuthenticated()) {
     res.redirect('/auth/twitter');
+    return;
+  }
+  next();
+}
+
+function ensureGithubAuthenticated(req, res, next) {
+  if (!req.isAuthenticated()) {
+    res.redirect('/auth/github');
     return;
   }
   next();

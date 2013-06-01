@@ -13,7 +13,8 @@
     "async": "*",
     "apac": "https://github.com/dmcquay/node-apac/tarball/master",
     "passport": "*",
-    "passport-twitter" : "*"
+    "passport-twitter" : "*",
+    "passport-github" : "*"
   },
   "engines": {
     "node": "0.10.x",
