@@ -1,9 +1,14 @@
 extends layout
 
 block content
-  h1= title
-  p Welcome, #{profile.username}
-  img(src='#{profile.photo}')
+  h1 #{title}
+  div
+    if (typeof profile !== 'undefined' && typeof profile.username !== 'undefined' && typeof profile.photo !== 'undefined')
+      p Welcome, #{profile.username}
+      img(src='#{profile.photo}', widht='32px', height='32px')
+    else
+      a(href='/login') login with Github
+
 
   div amazon.co.jp
     ul
