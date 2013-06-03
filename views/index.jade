@@ -5,9 +5,10 @@ block content
   div
     if (typeof profile !== 'undefined' && typeof profile.username !== 'undefined' && typeof profile.photo !== 'undefined')
       p Welcome, #{profile.username}
-      img(src='#{profile.photo}', widht='32px', height='32px')
+      img#profile(src='#{profile.photo}')
     else
-      a(href='/login') login with Github
+      button(onclick='location.href="/login"')
+        i.icon-github-sign login with Github
 
 
   div amazon.co.jp
