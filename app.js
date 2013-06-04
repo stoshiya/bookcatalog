@@ -1,5 +1,6 @@
 var express = require('express')
   , routes = require('./routes')
+  , url = require('url')
   , http = require('http')
   , path = require('path')
   , request = require('request')
@@ -36,7 +37,11 @@ passport.use(new GithubStrategy({
     passport.session.accessToken = token;
     passport.session.profile = profile;
     var options = {
-      url: 'http://api.github.com/orgs/' + githubOrg + '/members/' + profile.username,
+      url: url.format({
+        protocol: 'https',
+        hostname: 'api.github.com',
+        pathname: '/orgs/' + githubOrg + '/members/' + profile.username
+      }),
       headers: {
         'Authorization': 'token ' + token
       }
