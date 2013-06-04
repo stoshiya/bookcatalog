@@ -10,21 +10,32 @@ block content
       button(onclick='location.href="/login"')
         i.icon-github-sign login with Github
 
+  div
+    - var isMember = (typeof profile !== 'undefined' && typeof profile.member !== 'undefined') ? profile.member : false;
+    from(action='/checkout', method='post')
+      if (isMember)
+          input(type='submit', value='checkout', from='checkout')
 
-  div amazon.co.jp
-    ul
-      each item in amazon
-        li
-          a(href='#{item.href}') #{item.title}
+      div amazon.co.jp
+        ul
+          each item in amazon
+            li
+              a(href='#{item.href}') #{item.title}
+              if (isMember)
+                input(type='checkbox', value='#{item.isbn}')
 
-  div oreilly.co.jp
-    ul
-      each item in oreilly
-        li
-          a(href='#{item.href}') #{item.title}
+      div oreilly.co.jp
+        ul
+          each item in oreilly
+            li
+              a(href='#{item.href}') #{item.title}
+              if (isMember)
+                input(type='checkbox', value='#{item.isbn}')
 
-  div computerbook.jp
-    ul
-      each item in computerbookjp
-        li
-          a(href='#{item.href}') #{item.title}
+      div computerbook.jp
+        ul
+          each item in computerbookjp
+            li
+              a(href='#{item.href}') #{item.title}
+              if (isMember)
+                input(type='checkbox', value='#{item.isbn}')
