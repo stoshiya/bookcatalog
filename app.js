@@ -2,6 +2,7 @@ var express = require('express')
   , routes = require('./routes')
   , http = require('http')
   , path = require('path')
+  , request = require('request')
   , passport = require('passport')
   , GithubStrategy = require('passport-github').Strategy;
 
@@ -15,9 +16,15 @@ passport.deserializeUser(function(obj, done) {
 
 var githubClientId = process.env.GITHUB_CLIENT_ID;
 var githubSecret   = process.env.GITHUB_CLIENT_SECRET;
+var githubOrg      = process.env.GITHUB_ORG;
 
 if (!githubClientId || !githubSecret) {
   console.error('require id and secret for github.');
+  process.exit(1);
+}
+
+if (!githubOrg) {
+  console.error('require organazation for github');
   process.exit(1);
 }
 
@@ -28,7 +35,21 @@ passport.use(new GithubStrategy({
   function(token, tokenSecret, profile, done) {
     passport.session.accessToken = token;
     passport.session.profile = profile;
-    process.nextTick(function() {
+    var options = {
+      url: 'http://api.github.com/orgs/' + githubOrg + '/members/' + profile.username,
+      headers: {
+        'Authorization': 'token ' + token
+      }
+    };
+    request.get(options, function(err, res, body) {
+      if (err) {
+        done(err);
+        return;
+      }
+      if (!res.statusCode == 204) {
+        done(new Error(profile.username + ' is not an organization member'));
+        return;
+      }
       done(null, {
         id:       profile.id,
         username: profile.username,
