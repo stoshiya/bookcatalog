@@ -24,9 +24,25 @@ if (!githubClientId || !githubSecret) {
   process.exit(1);
 }
 
-if (!githubOrg) {
-  console.error('require organazation for github');
-  process.exit(1);
+function checkMember(profile, token, callback) {
+  if (githubOrg) {
+    request.get({
+      url: url.format({
+        protocol: 'https',
+        hostname: 'api.github.com',
+        pathname: '/orgs/' + githubOrg + '/members/' + profile.username
+      }),
+      headers: { 'Authorization': 'token ' + token }
+    }, function (err, res) {
+      if (err) {
+        callback(false);
+        return;
+      }
+      callback(res.statusCode !== 204);
+    });
+  } else {
+    callback(false);
+  }
 }
 
 passport.use(new GithubStrategy({
@@ -36,29 +52,12 @@ passport.use(new GithubStrategy({
   function(token, tokenSecret, profile, done) {
     passport.session.accessToken = token;
     passport.session.profile = profile;
-    var options = {
-      url: url.format({
-        protocol: 'https',
-        hostname: 'api.github.com',
-        pathname: '/orgs/' + githubOrg + '/members/' + profile.username
-      }),
-      headers: {
-        'Authorization': 'token ' + token
-      }
-    };
-    request.get(options, function(err, res, body) {
-      if (err) {
-        done(err);
-        return;
-      }
-      if (!res.statusCode == 204) {
-        done(new Error(profile.username + ' is not an organization member'));
-        return;
-      }
+    checkMember(profile, token, function(isMember) {
       done(null, {
         id:       profile.id,
         username: profile.username,
-        photo:    profile._json.avatar_url
+        photo:    profile._json.avatar_url,
+        member:   isMember
       });
     });
   }
@@ -93,14 +92,6 @@ app.get('/callback', passport.authenticate('github', {
   successRedirect: '/',
   failureRedirect: '/login'
 }));
-
-function ensureAuthenticated(req, res, next) {
-  if (!req.isAuthenticated()) {
-    res.redirect('/login');
-    return;
-  }
-  next();
-}
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log("Express server listening on port " + app.get('port'));
