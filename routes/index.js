@@ -1,6 +1,7 @@
 var async = require('async')
   , amazon = require('./../lib/amazon')
-  , scraper = require('./../lib/rssScrape');
+  , scraper = require('./../lib/rssScrape')
+  , Book = require('./../model/book');
 
 exports.index = function(req, res){
   async.parallel({
@@ -9,7 +10,7 @@ exports.index = function(req, res){
       pageIndex = pageIndex > 0 ? pageIndex : 1;
       amazon.get(pageIndex, function(err, array) {
         callback(err, array);
-      })
+      });
     },
     oreilly: function(callback) {
       scraper.oreilly(function(err, array) {
@@ -26,12 +27,16 @@ exports.index = function(req, res){
       res.send(500, err);
       return;
     }
+    cache = results;
     res.render('index', {
       title: 'Book Catalog',
       profile: req.session.passport.user,
       amazon: results.amazon,
       oreilly: results.oreilly,
       computerbookjp: results.computerbookjp
-    })
+    });
   });
+};
+
+exports.checkout = function(req, res) {
 };
