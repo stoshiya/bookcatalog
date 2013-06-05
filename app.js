@@ -20,7 +20,7 @@ var githubSecret   = process.env.GITHUB_CLIENT_SECRET;
 var githubOrg      = process.env.GITHUB_ORG;
 
 if (!githubClientId || !githubSecret) {
-  console.error('require id and secret for github.');
+  console.error('require client id and secret for connecting to GitHub API.');
   process.exit(1);
 }
 
