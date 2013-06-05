@@ -1,30 +1,57 @@
 extends layout
 
 block content
+  a(href='https://github.com/stoshiya/bookcatalog')
+    img(style='position: absolute; top: 0; right: 0; border: 0;', src='https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png', alt='Fork me on GitHub')
+
   h1 #{title}
   div
-    if (typeof profile !== 'undefined' && typeof profile.username !== 'undefined' && typeof profile.photo !== 'undefined')
+    - var login = typeof profile !== 'undefined' && typeof profile.username !== 'undefined' && typeof profile.photo !== 'undefined'
+    - if (login)
       p Welcome, #{profile.username}
       img#profile(src='#{profile.photo}')
-    else
+    - else
       button(onclick='location.href="/login"')
-        i.icon-github-sign login with Github
+        i.icon-github-sign  login with Github
 
+  section amazon.co.jp
+    each item in amazon
+      div.checkable
+        i.icon-check-empty.icon-large(data-isbn='#{item.isbn}')
+        a(href='#{item.href}', target='_blank') #{item.title}
 
-  div amazon.co.jp
-    ul
-      each item in amazon
-        li
-          a(href='#{item.href}') #{item.title}
+  section oreilly.co.jp
+    each item in oreilly
+      div.checkable
+        i.icon-check-empty.icon-large(data-isbn='#{item.isbn}')
+        a(href='#{item.href}', target='_blank') #{item.title}
 
-  div oreilly.co.jp
-    ul
-      each item in oreilly
-        li
-          a(href='#{item.href}') #{item.title}
+  section computerbook.jp
+    each item in computerbookjp
+      div.checkable
+        i.icon-check-empty.icon-large(data-isbn='#{item.isbn}')
+        a(href='#{item.href}', target='_blank') #{item.title}
 
-  div computerbook.jp
-    ul
-      each item in computerbookjp
-        li
-          a(href='#{item.href}') #{item.title}
+  - if (login && profile.member)
+    button#output
+      i.icon-shopping-cart.icon-large
+
+  script.
+    if ($('button > i.icon-github-sign').length === 1) {
+      $('div.checkable > i').removeClass('icon-check-empty').addClass('icon-book');
+    }
+
+    $('div.checkable > i.icon-check-empty').click(function() {
+      $(this).toggleClass('icon-check-empty').toggleClass('icon-check');
+    });
+    $('div.checkable > i.icon-check').click(function() {
+      $(this).toggleClass('icon-check-empty').toggleClass('icon-check');
+    });
+
+    $('button#output').click(function() {
+      if ($('div.checkable > i.icon-check').length > 0) {
+        console.log($('div.checkable > i.icon-check'));
+      } else {
+        alert('Select item!');
+      }
+    });

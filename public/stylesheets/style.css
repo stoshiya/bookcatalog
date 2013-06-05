@@ -11,3 +11,28 @@ img#profile {
     widht: 32px;
     height: 32px;
 }
+
+button {
+    font-size: 20px;
+}
+
+section {
+    margin: 20px;
+    font-size: 16px;
+}
+
+div.checkable {
+    margin-left: 30px;
+}
+
+div.checkable i.icon-check-empty {
+    margin-right: 10px;
+}
+
+div.checkable i.icon-check {
+    margin-right: 7px;
+}
+
+div.checkable i.icon-book {
+    margin-right: 7px;
+}
