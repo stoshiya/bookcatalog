@@ -86,6 +86,7 @@ app.configure('development', function(){
 });
 
 app.get('/', routes.index);
+app.post('/checkout', routes.checkout);
 
 app.get('/login',    passport.authenticate('github'));
 app.get('/callback', passport.authenticate('github', {
