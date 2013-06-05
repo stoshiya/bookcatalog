@@ -14,7 +14,6 @@
     "apac": "https://github.com/dmcquay/node-apac/tarball/master",
     "passport": "*",
     "passport-github" : "*",
-    "request": "*",
     "mongoose": "*"
   },
   "engines": {
