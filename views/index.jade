@@ -1,9 +1,15 @@
 extends layout
 
 block content
+  - var isAuthed = false, isMember = false;
+  - if (typeof profile !== 'undefined') {
+  -   isAuthed = typeof profile.username !== 'undefined' && typeof profile.photo !== 'undefined';
+  -   isMember = typeof profile.member !== 'undefined' ? profile.member : false;
+  - }
+
   h1 #{title}
   div
-    if (typeof profile !== 'undefined' && typeof profile.username !== 'undefined' && typeof profile.photo !== 'undefined')
+    if (isAuthed)
       p Welcome, #{profile.username}
       img#profile(src='#{profile.photo}')
     else
@@ -11,18 +17,16 @@ block content
         i.icon-github-sign login with Github
 
   div
-    - var isMember = (typeof profile !== 'undefined' && typeof profile.member !== 'undefined') ? profile.member : false;
-    from(action='/checkout', method='post')
+    form(action='/checkout', method='post')
       if (isMember)
-          input(type='submit', value='checkout', from='checkout')
-
+        input(type='submit', value='checkout')
       div amazon.co.jp
         ul
           each item in amazon
             li
               a(href='#{item.href}') #{item.title}
               if (isMember)
-                input(type='checkbox', value='#{item.isbn}')
+                input(type='checkbox', name='#{item.title}', value='#{item.isbn}')
 
       div oreilly.co.jp
         ul
@@ -30,7 +34,7 @@ block content
             li
               a(href='#{item.href}') #{item.title}
               if (isMember)
-                input(type='checkbox', value='#{item.isbn}')
+                input(type='checkbox', name='#{item.title}', value='#{item.isbn}')
 
       div computerbook.jp
         ul
@@ -38,4 +42,4 @@ block content
             li
               a(href='#{item.href}') #{item.title}
               if (isMember)
-                input(type='checkbox', value='#{item.isbn}')
+                input(type='checkbox', name='#{item.title}', value='#{item.isbn}')

@@ -39,4 +39,25 @@ exports.index = function(req, res){
 };
 
 exports.checkout = function(req, res) {
+  var isMember = req.session.passport.user.member;
+  if (!isMember) {
+    res.send(550, 'permittion denied');
+    return;
+  }
+  var books = [];
+  for (var key in req.body) {
+    if (req.body.hasOwnProperty(key)) {
+      books.push({ name: key, isbn: req.body[key] });
+    }
+  }
+  async.each(books, function(book, callback) {
+    Book.findOneAndUpdate({ isbn: book.isbn }, book, { upsert:true }, function(err) {
+      console.log(err);
+      if (err) callback(err);
+      else     callback();
+    });
+  }, function(err) {
+    if (err) res.send(500, err);
+    else     res.send(201, 'Success to checkout');
+  });
 };

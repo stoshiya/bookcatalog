@@ -1,5 +1,5 @@
 var mongoose = require('mongoose');
-var mongoUri = process.env.MONGO_URI;
+var mongoUri = process.env.MONGODB_URI;
 
 if (!mongoUri) {
   console.error('require mongo db URI.');
@@ -7,6 +7,10 @@ if (!mongoUri) {
 }
 
 var db = mongoose.createConnection(mongoUri + '/bookcatalog');
-var schema = new mongoose.Schema({ any: {} });
+var schema = new mongoose.Schema({
+	name: String,
+	isbn: String,
+	date: { type: Date, default: Date.now }
+ });
 var Book = db.model('book', schema);
 module.exports = Book;
