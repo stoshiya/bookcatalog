@@ -15,43 +15,28 @@ block content
         i.icon-github-sign  login with Github
 
   section amazon.co.jp
-    each item in amazon
+    - each item in amazon
       div.checkable
-        i.icon-check-empty.icon-large(data-isbn='#{item.isbn}')
+        i.icon-check-empty.icon-large(data-isbn='#{item.isbn}', data-publisher='#{item.publisher}')
         a(href='#{item.href}', target='_blank') #{item.title}
 
   section oreilly.co.jp
-    each item in oreilly
+    - each item in oreilly
       div.checkable
-        i.icon-check-empty.icon-large(data-isbn='#{item.isbn}')
+        i.icon-check-empty.icon-large(data-isbn='#{item.isbn}', data-publisher='#{item.publisher}')
         a(href='#{item.href}', target='_blank') #{item.title}
 
   section computerbook.jp
-    each item in computerbookjp
+    - each item in computerbookjp
       div.checkable
-        i.icon-check-empty.icon-large(data-isbn='#{item.isbn}')
+        i.icon-check-empty.icon-large(data-isbn='#{item.isbn}', data-publisher='#{item.publisher}')
         a(href='#{item.href}', target='_blank') #{item.title}
 
   - if (login && profile.member)
     button#output
-      i.icon-shopping-cart.icon-large
+      i.icon-print.icon-large
 
-  script.
-    if ($('button > i.icon-github-sign').length === 1) {
-      $('div.checkable > i').removeClass('icon-check-empty').addClass('icon-book');
-    }
+  div#selected
+    pre
 
-    $('div.checkable > i.icon-check-empty').click(function() {
-      $(this).toggleClass('icon-check-empty').toggleClass('icon-check');
-    });
-    $('div.checkable > i.icon-check').click(function() {
-      $(this).toggleClass('icon-check-empty').toggleClass('icon-check');
-    });
-
-    $('button#output').click(function() {
-      if ($('div.checkable > i.icon-check').length > 0) {
-        console.log($('div.checkable > i.icon-check'));
-      } else {
-        alert('Select item!');
-      }
-    });
+  script(src='/javascripts/index.js')

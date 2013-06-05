@@ -27,7 +27,6 @@ exports.index = function(req, res){
       res.send(500, err);
       return;
     }
-    cache = results;
     res.render('index', {
       title: 'Book Catalog',
       profile: req.session.passport.user,
@@ -52,7 +51,6 @@ exports.checkout = function(req, res) {
   }
   async.each(books, function(book, callback) {
     Book.findOneAndUpdate({ isbn: book.isbn }, book, { upsert:true }, function(err) {
-      console.log(err);
       if (err) callback(err);
       else     callback();
     });
