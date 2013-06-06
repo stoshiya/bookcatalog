@@ -43,16 +43,24 @@ exports.checkout = function(req, res) {
     res.send(401);
     return;
   }
-
-  var books = [];
-  for (var key in req.body) {
-    if (req.body.hasOwnProperty(key)) {
-      books.push({ name: key, isbn: req.body[key] });
-    }
+  if (typeof req.body === 'undefined') {
+    res.send(400);
   }
-  async.each(books, function(book, callback) {
-    Book.findOneAndUpdate({ isbn: book.isbn }, book, { upsert: true }, function(err) {
-      callback(err);
+
+  var isbnList = req.body.split(',');
+  async.each(isbnList, function(isbn, callback) {
+    Book.findOne({ isbn: isbn }, function(err, result) {
+      if (err) {
+        callback(err);
+        return;
+      }
+      if (!result) {
+        Book({ isbn: isbn }).save(function(err) {
+          callback(err);
+          return;
+        });
+      }
+      callback();
     });
   }, function(err) {
     if (err) {
