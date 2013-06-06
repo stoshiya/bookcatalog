@@ -33,6 +33,10 @@ div.checkable i.icon-check {
     margin-right: 7px;
 }
 
+div.checkable i.icon-check-sign {
+    margin-right: 10px;
+}
+
 div.checkable i.icon-book {
     margin-right: 7px;
 }

@@ -15,15 +15,27 @@
     var items = $('div.checkable > i.icon-check');
     if (items.length > 0) {
       var str = '';
+      var isbnList = [];
       items.each(function() {
+        var isbn = $(this).attr('data-isbn');
         str +=
-          '＊書名　　　　：' + $(this).next().text() + '\n' +
-          '（著者）　　　：\n' +
-          '＊出版社　　　：' + $(this).attr('data-publisher')+ '\n' +
-          '＊ＩＳＢＮ　　：' + $(this).attr('data-isbn') + '\n' +
-          '（本体価格）　：' + '\n' + '\n';
+          '\n＊書名　　　　：' + $(this).next().text() +
+          '\n（著者）　　　：' +
+          '\n＊出版社　　　：' + $(this).attr('data-publisher') +
+          '\n＊ＩＳＢＮ　　：' + isbn +
+          '\n（本体価格）　：\n';
+        isbnList.push(isbn);
       });
       $('div#selected > pre').empty().append(str);
+
+      $.ajax({
+        type: 'post',
+        url:  '/checkout',
+        data: { isbnList: isbnList },
+        dataType: 'json'
+      });
+
+      items.toggleClass('icon-check').toggleClass('icon-check-sign')
     } else {
       alert('Select item!');
     }

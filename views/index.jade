@@ -17,19 +17,28 @@ block content
   section amazon.co.jp
     - each item in amazon
       div.checkable
-        i.icon-check-empty.icon-large(data-isbn='#{item.isbn}', data-publisher='#{item.publisher}')
+        - if (item.registered)
+          i.icon-check-sign.icon-large(data-isbn='#{item.isbn}', data-publisher='#{item.publisher}')
+        - else
+          i.icon-check-empty.icon-large(data-isbn='#{item.isbn}', data-publisher='#{item.publisher}')
         a(href='#{item.href}', target='_blank') #{item.title}
 
   section oreilly.co.jp
     - each item in oreilly
       div.checkable
-        i.icon-check-empty.icon-large(data-isbn='#{item.isbn}', data-publisher='#{item.publisher}')
+        - if (item.registered)
+          i.icon-check-sign.icon-large(data-isbn='#{item.isbn}', data-publisher='#{item.publisher}')
+        - else
+          i.icon-check-empty.icon-large(data-isbn='#{item.isbn}', data-publisher='#{item.publisher}')
         a(href='#{item.href}', target='_blank') #{item.title}
 
   section computerbook.jp
     - each item in computerbookjp
       div.checkable
-        i.icon-check-empty.icon-large(data-isbn='#{item.isbn}', data-publisher='#{item.publisher}')
+        - if (item.registered)
+          i.icon-check-sign.icon-large(data-isbn='#{item.isbn}', data-publisher='#{item.publisher}')
+        - else
+          i.icon-check-empty.icon-large(data-isbn='#{item.isbn}', data-publisher='#{item.publisher}')
         a(href='#{item.href}', target='_blank') #{item.title}
 
   - if (login && profile.member)
