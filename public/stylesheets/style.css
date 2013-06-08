@@ -7,13 +7,24 @@ a {
   color: #00B7FF;
 }
 
+span {
+    margin: 5px;
+}
+
+span#profile {
+    font-size: 16px;
+}
+
 img#profile {
     widht: 32px;
     height: 32px;
+    vertical-align: middle;
 }
 
 button {
     font-size: 20px;
+    height:32px;
+    position: absolute;
 }
 
 section {

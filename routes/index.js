@@ -20,7 +20,7 @@ var checkRegistered = function (array, isMember, callback) {
         return;
       }
       book.registered = !!result;
-      callback()
+      callback();
     });
   }, function (err) {
     if (err) {

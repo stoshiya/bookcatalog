@@ -8,11 +8,16 @@ block content
   div
     - var login = typeof profile !== 'undefined' && typeof profile.username !== 'undefined' && typeof profile.photo !== 'undefined'
     - if (login)
-      p Welcome, #{profile.username}
-      img#profile(src='#{profile.photo}')
+      span#profile Welcome, #{profile.username}
+      span
+        img#profile(src='#{profile.photo}')
+      span
+        button(onclick='location.href="/logout"')
+          i.icon-signout  Sign out
     - else
-      button(onclick='location.href="/login"')
-        i.icon-github-sign  login with Github
+      span
+        button(onclick='location.href="/login"')
+          i.icon-github-sign  Sign in with Github
 
   section amazon.co.jp
     - each item in amazon
