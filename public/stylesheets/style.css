@@ -11,20 +11,19 @@ span {
     margin: 5px;
 }
 
-span#profile {
-    font-size: 16px;
+span#username {
+    font-size: 21px;
 }
 
-img#profile {
-    widht: 32px;
-    height: 32px;
+img#photo {
+    width: 24px;
+    height: 24px;
     vertical-align: middle;
 }
 
 button {
-    font-size: 20px;
-    height:32px;
-    position: absolute;
+    font-size: 16px;
+    height:24px;
 }
 
 section {

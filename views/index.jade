@@ -8,9 +8,9 @@ block content
   div
     - var login = typeof profile !== 'undefined' && typeof profile.username !== 'undefined' && typeof profile.photo !== 'undefined'
     - if (login)
-      span#profile Welcome, #{profile.username}
       span
-        img#profile(src='#{profile.photo}')
+        img#photo(src='#{profile.photo}')
+      span#username #{profile.username}
       span
         button(onclick='location.href="/logout"')
           i.icon-signout  Sign out
