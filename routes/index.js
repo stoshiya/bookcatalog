@@ -5,6 +5,9 @@ var async = require('async')
   , Book = require('./../model/book');
 
 
+var cache = { lastModified: new Date().getTime() };
+var lifeTime = 3600 * 24;
+
 var checkRegistered = function (array, isMember, callback) {
   if (!isMember) {
     array.forEach(function(book) {
@@ -35,6 +38,12 @@ exports.index = function(req, res){
   var isMember = req.isAuthenticated() && typeof req.session.passport.user !== 'undefined' && req.session.passport.user.member;
   async.parallel({
     amazon: function(callback) {
+      if (typeof cache.amazon !== 'undefined' && cache.lastModified + lifeTime > new Date().getTime()) {
+        checkRegistered(cache.amazon, isMember, function(err, array) {
+          callback(err, array);
+        });
+        return;
+      }
       var pageIndex = parseInt(req.params.index, 10) || 1;
       pageIndex = pageIndex > 0 ? pageIndex : 1;
       amazon.get(pageIndex, function(err, array) {
@@ -43,28 +52,46 @@ exports.index = function(req, res){
           return;
         }
         checkRegistered(array, isMember, function(err, array) {
+          cache.amazon = array;
+          cache.lastModified = new Date().getTime();
           callback(err, array);
         });
       });
     },
     oreilly: function(callback) {
+      if (typeof cache.oreilly !== 'undefined' && cache.lastModified + lifeTime > new Date().getTime()) {
+        checkRegistered(cache.oreilly, isMember, function(err, array) {
+          callback(err, array);
+        });
+        return;
+      }
       scraper.oreilly(function(err, array) {
         if (err) {
           callback(err);
           return;
         }
         checkRegistered(array, isMember, function(err, array) {
+          cache.oreilly = array;
+          cache.lastModified = new Date().getTime();
           callback(err, array);
         });
       });
     },
     computerbookjp: function(callback) {
+      if (typeof cache.computerbookjp !== 'undefined' && cache.lastModified + lifeTime < new Date().getTime()) {
+        checkRegistered(cache.computerbookjp, isMember, function(err, array) {
+          callback(null, array);
+        });
+        return;
+      }
       scraper.computerbookjp(function(err, array) {
         if (err) {
           callback(err);
           return;
         }
         checkRegistered(array, isMember, function(err, array) {
+          amazon.computerbookjp = array;
+          cache.lastModified = new Date().getTime();
           callback(err, array);
         });
       });
