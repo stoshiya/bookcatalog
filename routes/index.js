@@ -22,7 +22,7 @@ var checkRegistered = function (array, isMember, callback) {
         callback(err);
         return;
       }
-      book.registered = !!result;
+      book.registered = result === true;
       callback();
     });
   }, function (err) {
@@ -90,7 +90,7 @@ exports.index = function(req, res){
           return;
         }
         checkRegistered(array, isMember, function(err, array) {
-          amazon.computerbookjp = array;
+          cache.computerbookjp = array;
           cache.lastModified = new Date().getTime();
           callback(err, array);
         });
