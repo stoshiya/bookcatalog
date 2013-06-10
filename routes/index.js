@@ -6,7 +6,7 @@ var async = require('async')
 
 
 var cache = { lastModified: new Date().getTime() };
-var lifeTime = 3600 * 24;
+var lifeTime = 60 * 60 * 24 * 1000;
 
 var checkRegistered = function (array, isMember, callback) {
   if (!isMember) {
