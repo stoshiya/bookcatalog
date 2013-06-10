@@ -22,7 +22,7 @@ var checkRegistered = function (array, isMember, callback) {
         callback(err);
         return;
       }
-      book.registered = result === true;
+      book.registered = result !== null;
       callback();
     });
   }, function (err) {
