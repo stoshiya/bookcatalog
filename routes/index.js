@@ -78,7 +78,7 @@ exports.index = function(req, res){
       });
     },
     computerbookjp: function(callback) {
-      if (typeof cache.computerbookjp !== 'undefined' && cache.lastModified + lifeTime < new Date().getTime()) {
+      if (typeof cache.computerbookjp !== 'undefined' && cache.lastModified + lifeTime > new Date().getTime()) {
         checkRegistered(cache.computerbookjp, isMember, function(err, array) {
           callback(null, array);
         });
@@ -101,6 +101,7 @@ exports.index = function(req, res){
       res.send(500, err);
       return;
     }
+    console.log(Object.keys(cache));
     res.render('index', {
       title:          'Book Catalog',
       profile:        req.session.passport.user,
