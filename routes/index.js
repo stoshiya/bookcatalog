@@ -5,8 +5,15 @@ var async = require('async')
   , Book = require('./../model/book');
 
 
-var cache = { lastModified: new Date().getTime() };
-var lifeTime = 60 * 60 * 24 * 1000;
+var cache = {
+  lastModified: new Date().getTime(),
+  isExpired: function() {
+    return this.lastModified + 60 * 60 * 24 * 1000 < new Date().getTime();
+  },
+  update: function() {
+    this.lastModified = new Date().getTime();
+  }
+};
 
 var checkRegistered = function (array, isMember, callback) {
   if (!isMember) {
@@ -35,10 +42,12 @@ var checkRegistered = function (array, isMember, callback) {
 };
 
 exports.index = function(req, res){
-  var isMember = req.isAuthenticated() && typeof req.session.passport.user !== 'undefined' && req.session.passport.user.member;
+  var passport = req.session.passport;
+  var isMember = req.isAuthenticated() && typeof passport !== 'undefined' &&
+    typeof passport.user !== 'undefined' && passport.user.member;
   async.parallel({
     amazon: function(callback) {
-      if (typeof cache.amazon !== 'undefined' && cache.lastModified + lifeTime > new Date().getTime()) {
+      if (typeof cache.amazon !== 'undefined' && !cache.isExpired()) {
         checkRegistered(cache.amazon, isMember, function(err, array) {
           callback(err, array);
         });
@@ -53,13 +62,13 @@ exports.index = function(req, res){
         }
         checkRegistered(array, isMember, function(err, array) {
           cache.amazon = array;
-          cache.lastModified = new Date().getTime();
+          cache.update();
           callback(err, array);
         });
       });
     },
     oreilly: function(callback) {
-      if (typeof cache.oreilly !== 'undefined' && cache.lastModified + lifeTime > new Date().getTime()) {
+      if (typeof cache.oreilly !== 'undefined' && !cache.isExpired()) {
         checkRegistered(cache.oreilly, isMember, function(err, array) {
           callback(err, array);
         });
@@ -72,13 +81,13 @@ exports.index = function(req, res){
         }
         checkRegistered(array, isMember, function(err, array) {
           cache.oreilly = array;
-          cache.lastModified = new Date().getTime();
+          cache.update();
           callback(err, array);
         });
       });
     },
     computerbookjp: function(callback) {
-      if (typeof cache.computerbookjp !== 'undefined' && cache.lastModified + lifeTime > new Date().getTime()) {
+      if (typeof cache.computerbookjp !== 'undefined' && !cache.isExpired()) {
         checkRegistered(cache.computerbookjp, isMember, function(err, array) {
           callback(null, array);
         });
@@ -91,7 +100,7 @@ exports.index = function(req, res){
         }
         checkRegistered(array, isMember, function(err, array) {
           cache.computerbookjp = array;
-          cache.lastModified = new Date().getTime();
+          cache.update();
           callback(err, array);
         });
       });
@@ -103,7 +112,7 @@ exports.index = function(req, res){
     }
     res.render('index', {
       title:          'Book Catalog',
-      profile:        req.session.passport.user,
+      profile:        passport.user,
       amazon:         results.amazon,
       oreilly:        results.oreilly,
       computerbookjp: results.computerbookjp
