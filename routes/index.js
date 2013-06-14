@@ -89,7 +89,6 @@ exports.index = function(req, res){
           callback(err);
           return;
         }
-        console.log(array[0]);
         checkRegistered(array, isMember, function(err, array) {
           cache.computerbookjp = array;
           cache.lastModified = new Date().getTime();
@@ -102,7 +101,6 @@ exports.index = function(req, res){
       res.send(500, err);
       return;
     }
-    console.log(Object.keys(cache));
     res.render('index', {
       title:          'Book Catalog',
       profile:        req.session.passport.user,
@@ -115,7 +113,6 @@ exports.index = function(req, res){
 
 exports.checkout = function(req, res) {
   var passport = req.session.passport;
-  console.log(req.body);
   if (!req.isAuthenticated() || typeof passport === 'undefined' ||
     typeof passport.user === 'undefined' || !passport.user.member) {
     res.send(401);
