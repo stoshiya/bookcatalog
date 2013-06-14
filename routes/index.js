@@ -89,6 +89,7 @@ exports.index = function(req, res){
           callback(err);
           return;
         }
+        console.log(array[0]);
         checkRegistered(array, isMember, function(err, array) {
           cache.computerbookjp = array;
           cache.lastModified = new Date().getTime();
@@ -114,11 +115,14 @@ exports.index = function(req, res){
 
 exports.checkout = function(req, res) {
   var passport = req.session.passport;
-  if (!req.isAuthenticated() || typeof passport === 'undefined' || typeof passport.user === 'undefined' || !passport.user.member) {
+  console.log(req.body);
+  if (!req.isAuthenticated() || typeof passport === 'undefined' ||
+    typeof passport.user === 'undefined' || !passport.user.member) {
     res.send(401);
     return;
   }
-  if (typeof req.body === 'undefined' || !util.isArray(req.body.isbnList)) {
+  if (typeof req.body === 'undefined' || !util.isArray(req.body.isbnList) ||
+    req.body.isbnList.length === 0) {
     res.send(400);
     return;
   }
