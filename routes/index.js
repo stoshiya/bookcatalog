@@ -1,9 +1,8 @@
 var async = require('async')
   , util = require('util')
   , amazon = require('./../lib/amazon')
-  , scraper = require('./../lib/rssScrape')
+  , scraper = require('./../lib/rssScraper')
   , Book = require('./../model/book');
-
 
 var cache = {
   lastModified: new Date().getTime(),
@@ -55,7 +54,7 @@ exports.index = function(req, res){
       }
       var pageIndex = parseInt(req.params.index, 10) || 1;
       pageIndex = pageIndex > 0 ? pageIndex : 1;
-      amazon.get(pageIndex, function(err, array) {
+      amazon.search(pageIndex, function(err, array) {
         if (err) {
           callback(err);
           return;
@@ -103,6 +102,11 @@ exports.index = function(req, res){
           cache.update();
           callback(err, array);
         });
+      });
+    },
+    wishList: function(callback) {
+      callback();
+      amazon.wishList(function(err, array) {
       });
     }
   }, function(err, results) {
