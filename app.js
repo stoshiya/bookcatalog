@@ -88,6 +88,7 @@ app.configure('development', function(){
 app.get('/', routes.index);
 app.post('/checkout', routes.checkout);
 app.delete('/checkin/:isbn', routes.checkin);
+app.post('/user', routes.user);
 
 app.get('/login',    passport.authenticate('github'));
 app.get('/callback', passport.authenticate('github', {

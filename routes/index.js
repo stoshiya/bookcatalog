@@ -2,7 +2,8 @@ var async = require('async')
   , util = require('util')
   , amazon = require('./../lib/amazon')
   , scraper = require('./../lib/rssScraper')
-  , Book = require('./../model/book');
+  , Book = require('./../lib/model').Book
+  , User = require('./../lib/model').User;
 
 var cache = {
   lastModified: new Date().getTime(),
@@ -105,9 +106,22 @@ exports.index = function(req, res){
       });
     },
     wishList: function(callback) {
-      callback();
-      amazon.wishList(function(err, array) {
-      });
+      if (isMember) {
+        User.findOne({ userId: passport.user.id }, function(err, result) {
+          if (err) {
+            callback(err);
+            return;
+          }
+          if (result) {
+            amazon.wishList(result.wishListId, function(err, array) {
+              callback();
+            });
+          }
+          callback();
+        });
+      } else {
+        callback();
+      }
     }
   }, function(err, results) {
     if (err) {
@@ -168,11 +182,13 @@ exports.checkout = function(req, res) {
 
 exports.checkin = function(req, res) {
   var passport = req.session.passport;
-  if (!req.isAuthenticated() || typeof passport === 'undefined' || typeof passport.user === 'undefined' || !passport.user.member) {
+  if (!req.isAuthenticated() || typeof passport === 'undefined' ||
+    typeof passport.user === 'undefined' || !passport.user.member) {
     res.send(401);
     return;
   }
-  if (typeof req.params === 'undefined' || typeof req.params.isbn === 'undefined' || typeof req.params.isbn !== 'string') {
+  if (typeof req.params === 'undefined' || typeof req.params.isbn === 'undefined' ||
+    typeof req.params.isbn !== 'string') {
     res.send(400);
     return;
   }
@@ -182,5 +198,28 @@ exports.checkin = function(req, res) {
       return;
     }
     res.send(200, 'Success to checkin');
+  });
+};
+
+exports.user = function(req, res) {
+  var passport = req.session.passport;
+  if (!req.isAuthenticated() || typeof passport === 'undefined' ||
+    typeof passport.user === 'undefined' || !passport.user.member) {
+    res.send(401);
+    return;
+  }
+  // The length of Amazon wish list Id is 13.
+  if (typeof req.body === 'undefined' || typeof req.body.wishListId === 'undefined' ||
+    typeof req.body.wishListId !== 'string' || req.body.wishListId.length !== 13) {
+    res.send(400);
+    return;
+  }
+
+  User.findOneAndUpdate({ userId: passport.user.id }, { $set: { wishListId: req.body.wishListId } }, function(err) {
+    if (err) {
+      res.send(500, err);
+      return;
+    }
+    res.send(200);
   });
 };
