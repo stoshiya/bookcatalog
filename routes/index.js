@@ -161,3 +161,22 @@ exports.checkout = function(req, res) {
       res.send(201, 'Success to checkout');
     });
 };
+
+exports.checkin = function(req, res) {
+  var passport = req.session.passport;
+  if (!req.isAuthenticated() || typeof passport === 'undefined' || typeof passport.user === 'undefined' || !passport.user.member) {
+    res.send(401);
+    return;
+  }
+  if (typeof req.params === 'undefined' || typeof req.params.isbn === 'undefined' || typeof req.params.isbn !== 'string') {
+    res.send(400);
+    return;
+  }
+  Book.remove({ isbn: req.params.isbn }, function(err) {
+    if (err) {
+      res.send(500, err);
+      return;
+    }
+    res.send(200, 'Success to checkin');
+  });
+};
