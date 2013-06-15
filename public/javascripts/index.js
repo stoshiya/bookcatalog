@@ -3,13 +3,32 @@
     $('div.checkable > i').removeClass('icon-check-empty').addClass('icon-book');
   }
 
-  $('div.checkable > i.icon-check-empty').click(function() {
+  function onClickCheckEmpty() {
     $(this).toggleClass('icon-check-empty').toggleClass('icon-check');
-  });
+    $(this).off('click').click(onClickCheck);
+  }
 
-  $('div.checkable > i.icon-check').click(function() {
+  function onClickCheck() {
     $(this).toggleClass('icon-check-empty').toggleClass('icon-check');
-  });
+    $(this).off('click').click(onClickCheckEmpty);
+  }
+
+  function onClickCheckSign() {
+    if (!confirm('Do you want to return a book?')) {
+      return;
+    }
+    var isbn = $(this).attr('data-isbn');
+    $.ajax({
+      type: 'delete',
+      url: '/checkin/' + isbn
+    });
+    $(this).toggleClass('icon-check-sign').toggleClass('icon-check-empty');
+    $(this).off('click').click(onClickCheckEmpty);
+  }
+
+  $('div.checkable > i.icon-check-empty').click(onClickCheckEmpty);
+  $('div.checkable > i.icon-check').click(onClickCheck);
+  $('div.checkable > i.icon-check-sign').click(onClickCheckSign);
 
   $('button#output').click(function() {
     var items = $('div.checkable > i.icon-check');
@@ -34,8 +53,8 @@
         data: { isbnList: isbnList },
         dataType: 'json'
       });
-
-      items.toggleClass('icon-check').toggleClass('icon-check-sign')
+      items.toggleClass('icon-check').toggleClass('icon-check-sign');
+      items.off('click').click(onClickCheckSign);
     } else {
       alert('Select item!');
     }
