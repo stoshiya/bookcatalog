@@ -140,13 +140,13 @@ exports.index = function(req, res){
 
 exports.checkout = function(req, res) {
   var passport = req.session.passport;
+  var isbnList = req.body.isbnList;
   if (!req.isAuthenticated() || typeof passport === 'undefined' ||
     typeof passport.user === 'undefined' || !passport.user.member) {
     res.send(401);
     return;
   }
-  if (typeof req.body === 'undefined' || !util.isArray(req.body.isbnList) ||
-    req.body.isbnList.length === 0) {
+  if (!util.isArray(isbnList) || isbnList.length === 0) {
     res.send(400);
     return;
   }
@@ -182,17 +182,18 @@ exports.checkout = function(req, res) {
 
 exports.checkin = function(req, res) {
   var passport = req.session.passport;
+  var isbn = req.params.isbn;
   if (!req.isAuthenticated() || typeof passport === 'undefined' ||
     typeof passport.user === 'undefined' || !passport.user.member) {
     res.send(401);
     return;
   }
-  if (typeof req.params === 'undefined' || typeof req.params.isbn === 'undefined' ||
-    typeof req.params.isbn !== 'string') {
+  if (typeof isbn !== 'string' || isbn.length !== 13) {
     res.send(400);
     return;
   }
-  Book.remove({ isbn: req.params.isbn }, function(err) {
+
+  Book.remove({ isbn: isbn }, function(err) {
     if (err) {
       res.send(500, err);
       return;
@@ -203,19 +204,19 @@ exports.checkin = function(req, res) {
 
 exports.user = function(req, res) {
   var passport = req.session.passport;
+  var wishListId = req.body.wishListId;
   if (!req.isAuthenticated() || typeof passport === 'undefined' ||
     typeof passport.user === 'undefined' || !passport.user.member) {
     res.send(401);
     return;
   }
   // The length of Amazon wish list Id is 13.
-  if (typeof req.body === 'undefined' || typeof req.body.wishListId === 'undefined' ||
-    typeof req.body.wishListId !== 'string' || req.body.wishListId.length !== 13) {
+  if (typeof wishListId !== 'string' || wishListId.length !== 13) {
     res.send(400);
     return;
   }
 
-  User.findOneAndUpdate({ userId: passport.user.id }, { $set: { wishListId: req.body.wishListId } }, function(err) {
+  User.findOneAndUpdate({ userId: passport.user.id }, { $set: { wishListId: wishListId } }, function(err) {
     if (err) {
       res.send(500, err);
       return;
