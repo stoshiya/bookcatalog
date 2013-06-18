@@ -89,7 +89,7 @@ exports.index = function(req, res){
     computerbookjp: function(callback) {
       if (typeof cache.computerbookjp !== 'undefined' && !cache.isExpired()) {
         checkRegistered(cache.computerbookjp, isMember, function(err, array) {
-          callback(null, array);
+          callback(err, array);
         });
         return;
       }
@@ -106,22 +106,23 @@ exports.index = function(req, res){
       });
     },
     wishList: function(callback) {
-      if (isMember) {
-        User.findOne({ userId: passport.user.id }, function(err, result) {
-          if (err) {
-            callback(err);
-            return;
-          }
-          if (result) {
-            amazon.wishList(result.wishListId, function(err, array) {
-              callback();
-            });
-          }
-          callback();
-        });
-      } else {
+      if (!isMember) {
         callback();
+        return;
       }
+      User.findOne({ userId: passport.user.id }, function(err, result) {
+        if (err) {
+          callback(err);
+          return;
+        }
+        if (result) {
+          amazon.wishList(result.wishListId, function(err, array) {
+            callback(err);
+          });
+          return;
+        }
+        callback();
+      });
     }
   }, function(err, results) {
     if (err) {
