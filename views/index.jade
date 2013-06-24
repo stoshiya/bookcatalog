@@ -19,7 +19,11 @@ block content
         button(onclick='location.href="/login"')
           i.icon-github-sign  Sign in with Github
 
-  section amazon.co.jp
+  section.amazon amazon.co.jp
+    div.searchbar
+      input(type='search')
+      button
+        i.icon-search
     - each item in amazon
       div.checkable
         - if (item.registered)
@@ -28,7 +32,7 @@ block content
           i.icon-check-empty.icon-large(data-isbn='#{item.isbn}', data-publisher='#{item.publisher}')
         a(href='#{item.href}', target='_blank') #{item.title}
 
-  section oreilly.co.jp
+  section.oreilly oreilly.co.jp
     - each item in oreilly
       div.checkable
         - if (item.registered)
@@ -37,7 +41,7 @@ block content
           i.icon-check-empty.icon-large(data-isbn='#{item.isbn}', data-publisher='#{item.publisher}')
         a(href='#{item.href}', target='_blank') #{item.title}
 
-  section computerbook.jp
+  section.computerbook computerbook.jp
     - each item in computerbookjp
       div.checkable
         - if (item.registered)

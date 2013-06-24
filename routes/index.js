@@ -41,31 +41,59 @@ var checkRegistered = function (array, isMember, callback) {
   });
 };
 
+var searchAtAmazon = function(isMember, pageIndex, keywords, callback) {
+  if (typeof keywords === 'function') {
+    callback = keywords;
+    keywords = null;
+  }
+  pageIndex = parseInt(pageIndex, 10) || 1;
+  pageIndex = pageIndex > 0 ? pageIndex : 1;
+  if (keywords === null && typeof cache.amazon !== 'undefined' && cache.amazon[pageIndex] !== 'undefined' && !cache.isExpired()) {
+    checkRegistered(cache.amazon[pageIndex], isMember, function(err, array) {
+      callback(err, array);
+    });
+    return;
+  }
+  amazon.search(pageIndex, keywords, function(err, array) {
+    if (err) {
+      callback(err);
+      return;
+    }
+    checkRegistered(array, isMember, function(err, array) {
+      if (keywords === null) {
+        if (cache.amazon === 'undefined' || cache.amazon !== 'object') {
+          cache.amazon = {};
+        }
+        cache.amazon[pageIndex] = array;
+        cache.update();
+      }
+      callback(err, array);
+    });
+  });
+};
+
+exports.amazon = function(req, res) {
+  var passport = req.session.passport;
+  var isMember = req.isAuthenticated() && typeof passport !== 'undefined' &&
+    typeof passport.user !== 'undefined' && passport.user.member;
+  var pageIndex = req.query.index;
+  var keywords  = req.query.keywords;
+  searchAtAmazon(isMember, pageIndex, keywords, function(err, array) {
+    if (err) {
+      res.send(404, err);
+      return;
+    }
+    res.json(200, array);
+  });
+};
+
 exports.index = function(req, res){
   var passport = req.session.passport;
   var isMember = req.isAuthenticated() && typeof passport !== 'undefined' &&
     typeof passport.user !== 'undefined' && passport.user.member;
   async.parallel({
     amazon: function(callback) {
-      if (typeof cache.amazon !== 'undefined' && !cache.isExpired()) {
-        checkRegistered(cache.amazon, isMember, function(err, array) {
-          callback(err, array);
-        });
-        return;
-      }
-      var pageIndex = parseInt(req.params.index, 10) || 1;
-      pageIndex = pageIndex > 0 ? pageIndex : 1;
-      amazon.search(pageIndex, function(err, array) {
-        if (err) {
-          callback(err);
-          return;
-        }
-        checkRegistered(array, isMember, function(err, array) {
-          cache.amazon = array;
-          cache.update();
-          callback(err, array);
-        });
-      });
+      searchAtAmazon(isMember, 1, callback);
     },
     oreilly: function(callback) {
       if (typeof cache.oreilly !== 'undefined' && !cache.isExpired()) {
