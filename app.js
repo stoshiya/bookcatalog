@@ -86,6 +86,7 @@ app.configure('development', function(){
 });
 
 app.get('/', routes.index);
+app.get('/catalog/amazon', routes.amazon);
 app.post('/checkout', routes.checkout);
 app.delete('/checkin/:isbn', routes.checkin);
 app.post('/user', routes.user);
