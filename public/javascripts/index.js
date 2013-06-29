@@ -36,7 +36,6 @@
       if (keywords === null || keywords.length < 1) {
         return;
       }
-      $('div.searchbar > input').val('');
 
       $.ajax({
         type: 'get',
@@ -76,7 +75,6 @@
           isbnList.push(isbn);
         });
         $('div#selected > pre').empty().append(str);
-        console.log(isbnList);
         $.ajax({
           type: 'post',
           url:  '/checkout',
