@@ -15,7 +15,7 @@ var cache = {
   }
 };
 
-var checkRegistered = function (array, isMember, callback) {
+var checkRegistered = function(array, isMember, callback) {
   if (!isMember) {
     array.forEach(function(book) {
       book.registered = false;
@@ -23,8 +23,8 @@ var checkRegistered = function (array, isMember, callback) {
     callback(null, array);
     return;
   }
-  async.each(array, function (book, callback) {
-    Book.findOne({ isbn: book.isbn }, function (err, result) {
+  async.each(array, function(book, callback) {
+    Book.findOne({ isbn: book.isbn }, function(err, result) {
       if (err) {
         callback(err);
         return;
@@ -32,12 +32,8 @@ var checkRegistered = function (array, isMember, callback) {
       book.registered = result !== null;
       callback();
     });
-  }, function (err) {
-    if (err) {
-      callback(err);
-      return;
-    }
-    callback(null, array);
+  }, function(err) {
+    callback(err, array);
   });
 };
 
@@ -60,6 +56,10 @@ var searchAtAmazon = function(isMember, pageIndex, keywords, callback) {
       return;
     }
     checkRegistered(array, isMember, function(err, array) {
+      if (err) {
+        callback(err);
+        return;
+      }
       if (keywords === null) {
         if (cache.amazon === 'undefined' || cache.amazon !== 'object') {
           cache.amazon = {};
@@ -67,7 +67,7 @@ var searchAtAmazon = function(isMember, pageIndex, keywords, callback) {
         cache.amazon[pageIndex] = array;
         cache.update();
       }
-      callback(err, array);
+      callback(null, array);
     });
   });
 };
@@ -97,9 +97,7 @@ exports.index = function(req, res){
     },
     oreilly: function(callback) {
       if (typeof cache.oreilly !== 'undefined' && !cache.isExpired()) {
-        checkRegistered(cache.oreilly, isMember, function(err, array) {
-          callback(err, array);
-        });
+        checkRegistered(cache.oreilly, isMember, callback);
         return;
       }
       scraper.oreilly(function(err, array) {
@@ -116,9 +114,7 @@ exports.index = function(req, res){
     },
     computerbookjp: function(callback) {
       if (typeof cache.computerbookjp !== 'undefined' && !cache.isExpired()) {
-        checkRegistered(cache.computerbookjp, isMember, function(err, array) {
-          callback(err, array);
-        });
+        checkRegistered(cache.computerbookjp, isMember, callback);
         return;
       }
       scraper.computerbookjp(function(err, array) {
@@ -183,7 +179,7 @@ exports.checkout = function(req, res) {
   async.each(req.body.isbnList,
     function(isbn, callback) {
       if (isbn.length !== 13) {
-        callback();
+        callback(400);
         return;
       }
       Book.findOne({ isbn: isbn }, function(err, result) {
@@ -195,9 +191,7 @@ exports.checkout = function(req, res) {
           callback();
           return;
         }
-        Book({ isbn: isbn }).save(function(err) {
-          callback(err);
-        });
+        Book({ isbn: isbn }).save(callback);
       });
     },
     function(err) {
