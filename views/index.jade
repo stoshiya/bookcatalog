@@ -25,30 +25,15 @@ block content
       button
         i.icon-search
     - each item in amazon
-      div.checkable
-        - if (item.registered)
-          i.icon-check-sign.icon-large(data-isbn='#{item.isbn}', data-publisher='#{item.publisher}')
-        - else
-          i.icon-check-empty.icon-large(data-isbn='#{item.isbn}', data-publisher='#{item.publisher}')
-        a(href='#{item.href}', target='_blank') #{item.title}
+      include include/item
 
   section.oreilly oreilly.co.jp
     - each item in oreilly
-      div.checkable
-        - if (item.registered)
-          i.icon-check-sign.icon-large(data-isbn='#{item.isbn}', data-publisher='#{item.publisher}')
-        - else
-          i.icon-check-empty.icon-large(data-isbn='#{item.isbn}', data-publisher='#{item.publisher}')
-        a(href='#{item.href}', target='_blank') #{item.title}
+      include include/item
 
   section.computerbook computerbook.jp
     - each item in computerbookjp
-      div.checkable
-        - if (item.registered)
-          i.icon-check-sign.icon-large(data-isbn='#{item.isbn}', data-publisher='#{item.publisher}')
-        - else
-          i.icon-check-empty.icon-large(data-isbn='#{item.isbn}', data-publisher='#{item.publisher}')
-        a(href='#{item.href}', target='_blank') #{item.title}
+      include include/item
 
   - if (login && profile.member)
     button#output
