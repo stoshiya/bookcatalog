@@ -42,12 +42,10 @@ var searchAtAmazon = function(isMember, pageIndex, keywords, callback) {
     callback = keywords;
     keywords = null;
   }
-  pageIndex = parseInt(pageIndex, 10) || 1;
+  pageIndex = parseInt(pageIndex, 10) || 0;
   pageIndex = pageIndex > 0 ? pageIndex : 1;
   if (keywords === null && typeof cache.amazon !== 'undefined' && cache.amazon[pageIndex] !== 'undefined' && !cache.isExpired()) {
-    checkRegistered(cache.amazon[pageIndex], isMember, function(err, array) {
-      callback(err, array);
-    });
+    checkRegistered(cache.amazon[pageIndex], isMember, callback);
     return;
   }
   amazon.search(pageIndex, keywords, function(err, array) {
@@ -127,25 +125,6 @@ exports.index = function(req, res){
           cache.update();
           callback(err, array);
         });
-      });
-    },
-    wishList: function(callback) {
-      if (!isMember) {
-        callback();
-        return;
-      }
-      User.findOne({ userId: passport.user.id }, function(err, result) {
-        if (err) {
-          callback(err);
-          return;
-        }
-        if (result) {
-          amazon.wishList(result.wishListId, function(err, array) {
-            callback(err);
-          });
-          return;
-        }
-        callback();
       });
     }
   }, function(err, results) {
@@ -245,5 +224,32 @@ exports.user = function(req, res) {
       return;
     }
     res.send(200);
+  });
+};
+
+exports.wishList = function(req, res) {
+  var passport = req.session.passport;
+  var isMember = req.isAuthenticated() && typeof passport !== 'undefined' &&
+    typeof passport.user !== 'undefined' && passport.user.member;
+  if (!isMember) {
+    res.send(401);
+    return;
+  }
+  User.findOne({ userId: passport.user.id }, function(err, result) {
+    if (err) {
+      res.send(500, err);
+      return;
+    }
+    if (!result) {
+      res.send(403);
+      return;
+    }
+    amazon.wishList(result.wishListId, function(err, array) {
+      if (err) {
+        res.send(500, err);
+        return;
+      }
+      res.json(array);
+    });
   });
 };

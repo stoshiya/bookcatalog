@@ -90,6 +90,7 @@ app.get('/catalog/amazon', routes.amazon);
 app.post('/checkout', routes.checkout);
 app.delete('/checkin/:isbn', routes.checkin);
 app.post('/user', routes.user);
+app.get('/wishList', routes.wishList);
 
 app.get('/login',    passport.authenticate('github'));
 app.get('/callback', passport.authenticate('github', {
