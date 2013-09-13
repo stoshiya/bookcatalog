@@ -38,7 +38,7 @@ function checkMember(profile, token, callback) {
         callback(false);
         return;
       }
-      callback(res.statusCode !== 204);
+      callback(res.statusCode === 204);
     });
   } else {
     callback(false);
