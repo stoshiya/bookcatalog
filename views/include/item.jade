@@ -1,6 +1,6 @@
 div.checkable
   - if (item.registered)
-    i.icon-check-sign.icon-large(data-isbn='#{item.isbn}', data-publisher='#{item.publisher}')
+    i.fa.fa-lg.fa-check-square(data-isbn='#{item.isbn}', data-publisher='#{item.publisher}')
   - else
-    i.icon-check-empty.icon-large(data-isbn='#{item.isbn}', data-publisher='#{item.publisher}')
+    i.fa.fa-lg.fa-square-o(data-isbn='#{item.isbn}', data-publisher='#{item.publisher}')
   a(href='#{item.href}', target='_blank') #{item.title}

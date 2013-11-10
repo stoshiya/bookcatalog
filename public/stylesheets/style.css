@@ -49,19 +49,19 @@ div.checkable {
     margin-left: 30px;
 }
 
-div.checkable i.icon-check-empty {
+div.checkable i.fa-square-o {
     margin-right: 10px;
 }
 
-div.checkable i.icon-check {
+div.checkable i.fa-check-square-o {
     margin-right: 7px;
 }
 
-div.checkable i.icon-check-sign {
+div.checkable i.fa-check-square {
     margin-right: 10px;
 }
 
-div.checkable i.icon-book {
+div.checkable i.fa-book {
     margin-right: 7px;
 }
 

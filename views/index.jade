@@ -13,17 +13,17 @@ block content
       span#username #{profile.username}
       span
         button(onclick='location.href="/logout"')
-          i.icon-signout  Sign out
+          i.fa.fa-sign-out  Sign out
     - else
       span
         button(onclick='location.href="/login"')
-          i.icon-github-sign  Sign in with Github
+          i.fa.fa-github  Sign in with Github
 
   section.amazon amazon.co.jp
     div.searchbar
       input(type='search')
       button
-        i.icon-search
+        i.fa.fa-search
     - each item in amazon
       include include/item
 
@@ -37,7 +37,7 @@ block content
 
   - if (login && profile.member)
     button#output
-      i.icon-print.icon-large
+      i.fa.fa-print
 
   div#selected
     pre

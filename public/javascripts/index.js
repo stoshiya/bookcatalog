@@ -1,11 +1,11 @@
 (function($) {
   var onClickCheckEmpty = function() {
-    $(this).toggleClass('icon-check-empty').toggleClass('icon-check');
+    $(this).toggleClass('fa-check-square-o').toggleClass('fa-square-o');
     $(this).off('click').click(onClickCheck);
   };
 
   var onClickCheck = function() {
-    $(this).toggleClass('icon-check-empty').toggleClass('icon-check');
+    $(this).toggleClass('fa-check-square-o').toggleClass('fa-square-o');
     $(this).off('click').click(onClickCheckEmpty);
   };
 
@@ -18,17 +18,17 @@
       type: 'delete',
       url: '/checkin/' + isbn
     });
-    $(this).toggleClass('icon-check-sign').toggleClass('icon-check-empty');
+    $(this).toggleClass('fa-check-square').toggleClass('fa-square-o');
     $(this).off('click').click(onClickCheckEmpty);
   };
 
   var initialize = function() {
-    if ($('button > i.icon-github-sign').length === 1) {
+    if ($('button > i.fa-github').length === 1) {
       $('div.checkable > i')
-      .removeClass('icon-check-empty')
-      .removeClass('icon-check')
-      .removeClass('icon-check-sign')
-      .addClass('icon-book');
+        .removeClass('fa-square-o')
+        .removeClass('fa-check-square-o')
+        .removeClass('fa-check-square')
+        .addClass('fa-book');
     }
 
     $('div.searchbar > button').off('click').click(function() {
@@ -46,7 +46,7 @@
         $('section.amazon > div.checkable').remove();
         results.forEach(function(item) {
           var $checkableDiv = $('<div class="checkable"></div>');
-          var $checkIcon = item.registered ? $('<i class="icon-check-sign icon-large"></i>') : $('<i class="icon-check-empty icon-large"></i>');
+          var $checkIcon = item.registered ? $('<i class="fa fa-lg fa-check-square"></i>') : $('<i class="fa fa-lg fa-square-o"></i>');
           $checkIcon.attr('data-isbn', item.isbn).attr('data-publisher', item.publisher);
           $checkableDiv.append($checkIcon);
           $checkableDiv.append($('<a></a>').attr('href', item.href).attr('target', '_blank').append(item.title));
@@ -56,11 +56,11 @@
       });
     });
 
-    $('div.checkable > i.icon-check-empty').off('click').click(onClickCheckEmpty);
-    $('div.checkable > i.icon-check').off('click').click(onClickCheck);
-    $('div.checkable > i.icon-check-sign').off('click').click(onClickCheckSign);
+    $('div.checkable > i.fa-square-o').off('click').click(onClickCheckEmpty);
+    $('div.checkable > i.fa-check-square-o').off('click').click(onClickCheck);
+    $('div.checkable > i.fa-check-square').off('click').click(onClickCheckSign);
     $('button#output').off('click').click(function() {
-      var items = $('div.checkable > i.icon-check');
+      var items = $('div.checkable > i.fa-check-square-o');
       if (items.length > 0) {
         var str = '';
         var isbnList = [];
@@ -81,7 +81,7 @@
           data: { isbnList: isbnList },
           dataType: 'json'
         });
-        items.toggleClass('icon-check').toggleClass('icon-check-sign');
+        items.toggleClass('fa-check-square-o').toggleClass('fa-check-square');
         items.off('click').click(onClickCheckSign);
       } else {
         alert('Select item!');
