@@ -22,27 +22,18 @@
     $(this).off('click').click(onClickCheckEmpty);
   };
 
-  var initialize = function() {
-    if ($('button > i.fa-github').length === 1) {
-      $('div.checkable > i')
-        .removeClass('fa-square-o')
-        .removeClass('fa-check-square-o')
-        .removeClass('fa-check-square')
-        .addClass('fa-book');
+  var searchHalder = function() {
+    var keywords = $('div.searchbar > input').val();
+    if (keywords === null || keywords.length < 1) {
+      return;
     }
 
-    $('div.searchbar > button').off('click').click(function() {
-      var keywords = $('div.searchbar > input').val();
-      if (keywords === null || keywords.length < 1) {
-        return;
-      }
-
-      $.ajax({
-        type: 'get',
-        url: '/catalog/amazon',
-        dataType: 'json',
-        data: { keywords: keywords }
-      }).done(function(results) {
+    $.ajax({
+      type: 'get',
+      url: '/catalog/amazon',
+      dataType: 'json',
+      data: { keywords: keywords }
+    }).done(function(results) {
         $('section.amazon > div.checkable').remove();
         results.forEach(function(item) {
           var $checkableDiv = $('<div class="checkable"></div>');
@@ -54,6 +45,22 @@
           initialize();
         });
       });
+  };
+
+  var initialize = function() {
+    if ($('button > i.fa-github').length === 1) {
+      $('div.checkable > i')
+        .removeClass('fa-square-o')
+        .removeClass('fa-check-square-o')
+        .removeClass('fa-check-square')
+        .addClass('fa-book');
+    }
+
+    $('div.searchbar > button').off('click').click(searchHalder);
+    $(document).keydown(function(e) {
+      if (e.keyCode === 13) { // Enter
+        searchHalder();
+      }
     });
 
     $('div.checkable > i.fa-square-o').off('click').click(onClickCheckEmpty);
