@@ -17,7 +17,7 @@ var cache = {
 
 var checkRegistered = function(array, isMember, callback) {
   if (!isMember) {
-    array.forEach(function(book) {
+    Array.prototype.forEach.call(array, function(book) {
       book.registered = false;
     });
     callback(null, array);
