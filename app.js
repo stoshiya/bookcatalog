@@ -1,9 +1,7 @@
 var express = require('express')
   , routes = require('./routes')
-  , url = require('url')
   , http = require('http')
   , path = require('path')
-  , request = require('request')
   , passport = require('passport')
   , GithubStrategy = require('passport-github').Strategy;
 
@@ -17,32 +15,10 @@ passport.deserializeUser(function(obj, done) {
 
 var githubClientId = process.env.GITHUB_CLIENT_ID;
 var githubSecret   = process.env.GITHUB_CLIENT_SECRET;
-var githubOrg      = process.env.GITHUB_ORG;
 
 if (!githubClientId || !githubSecret) {
   console.error('require client id and secret for connecting to GitHub API.');
   process.exit(1);
-}
-
-function checkMember(profile, token, callback) {
-  if (githubOrg) {
-    request.get({
-      url: url.format({
-        protocol: 'https',
-        hostname: 'api.github.com',
-        pathname: '/orgs/' + githubOrg + '/members/' + profile.username
-      }),
-      headers: { 'Authorization': 'token ' + token }
-    }, function (err, res) {
-      if (err) {
-        callback(false);
-        return;
-      }
-      callback(res.statusCode === 204);
-    });
-  } else {
-    callback(false);
-  }
 }
 
 passport.use(new GithubStrategy({
@@ -52,13 +28,10 @@ passport.use(new GithubStrategy({
   function(token, tokenSecret, profile, done) {
     passport.session.accessToken = token;
     passport.session.profile = profile;
-    checkMember(profile, token, function(isMember) {
-      done(null, {
-        id:       profile.id,
-        username: profile.username,
-        photo:    profile._json.avatar_url,
-        member:   isMember
-      });
+    done(null, {
+      id:       profile.id,
+      username: profile.username,
+      photo:    profile._json.avatar_url
     });
   }
 ));

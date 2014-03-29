@@ -10,7 +10,6 @@
     % export AWS_SECRET=...
     % export AWS_ASSOCIATE_ID=...
 
-    % export GITHUB_ORG=...  (Optional)
     % export MONGOLAB_URI=... (Optional for using mongolab)
 
     % node app.js

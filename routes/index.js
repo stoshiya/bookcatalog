@@ -72,8 +72,7 @@ var searchAtAmazon = function(isMember, pageIndex, keywords, callback) {
 
 exports.amazon = function(req, res) {
   var passport = req.session.passport;
-  var isMember = req.isAuthenticated() && typeof passport !== 'undefined' &&
-    typeof passport.user !== 'undefined' && passport.user.member;
+  var isMember = req.isAuthenticated() && typeof passport !== 'undefined' && typeof passport.user !== 'undefined';
   var pageIndex = req.query.index;
   var keywords  = req.query.keywords;
   searchAtAmazon(isMember, pageIndex, keywords, function(err, array) {
@@ -87,8 +86,7 @@ exports.amazon = function(req, res) {
 
 exports.index = function(req, res){
   var passport = req.session.passport;
-  var isMember = req.isAuthenticated() && typeof passport !== 'undefined' &&
-    typeof passport.user !== 'undefined' && passport.user.member;
+  var isMember = req.isAuthenticated() && typeof passport !== 'undefined' && typeof passport.user !== 'undefined';
   async.parallel({
     amazon: function(callback) {
       searchAtAmazon(isMember, 1, callback);
@@ -145,8 +143,7 @@ exports.index = function(req, res){
 exports.checkout = function(req, res) {
   var passport = req.session.passport;
   var isbnList = req.body.isbnList;
-  if (!req.isAuthenticated() || typeof passport === 'undefined' ||
-    typeof passport.user === 'undefined' || !passport.user.member) {
+  if (!req.isAuthenticated() || typeof passport === 'undefined' || typeof passport.user === 'undefined') {
     res.send(401);
     return;
   }
@@ -185,8 +182,7 @@ exports.checkout = function(req, res) {
 exports.checkin = function(req, res) {
   var passport = req.session.passport;
   var isbn = req.params.isbn;
-  if (!req.isAuthenticated() || typeof passport === 'undefined' ||
-    typeof passport.user === 'undefined' || !passport.user.member) {
+  if (!req.isAuthenticated() || typeof passport === 'undefined' || typeof passport.user === 'undefined') {
     res.send(401);
     return;
   }
@@ -207,8 +203,7 @@ exports.checkin = function(req, res) {
 exports.user = function(req, res) {
   var passport = req.session.passport;
   var wishListId = req.body.wishListId;
-  if (!req.isAuthenticated() || typeof passport === 'undefined' ||
-    typeof passport.user === 'undefined' || !passport.user.member) {
+  if (!req.isAuthenticated() || typeof passport === 'undefined' || typeof passport.user === 'undefined') {
     res.send(401);
     return;
   }
@@ -229,9 +224,7 @@ exports.user = function(req, res) {
 
 exports.wishList = function(req, res) {
   var passport = req.session.passport;
-  var isMember = req.isAuthenticated() && typeof passport !== 'undefined' &&
-    typeof passport.user !== 'undefined' && passport.user.member;
-  if (!isMember) {
+  if (req.isAuthenticated() && typeof passport !== 'undefined' && typeof passport.user !== 'undefined') {
     res.send(401);
     return;
   }
