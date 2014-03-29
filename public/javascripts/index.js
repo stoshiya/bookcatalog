@@ -22,7 +22,7 @@
     $(this).off('click').click(onClickCheckEmpty);
   };
 
-  var searchHalder = function() {
+  var searchHandler = function() {
     var keywords = $('div.searchbar > input').val();
     if (keywords === null || keywords.length < 1) {
       return;
@@ -56,10 +56,10 @@
         .addClass('fa-book');
     }
 
-    $('div.searchbar > button').off('click').click(searchHalder);
+    $('div.searchbar > button').off('click').click(searchHandler);
     $(document).keydown(function(e) {
       if (e.keyCode === 13) { // Enter
-        searchHalder();
+        searchHandler();
       }
     });
 
