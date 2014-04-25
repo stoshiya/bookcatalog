@@ -1,7 +1,11 @@
 var express = require('express')
   , routes = require('./routes')
-  , http = require('http')
   , path = require('path')
+  , favicon = require('static-favicon')
+  , logger = require('morgan')
+  , cookieParser = require('cookie-parser')
+  , bodyParser = require('body-parser')
+  , session = require('express-session')
   , passport = require('passport')
   , GithubStrategy = require('passport-github').Strategy;
 
@@ -37,34 +41,35 @@ passport.use(new GithubStrategy({
 ));
 
 var app = express();
+var port = process.env.PORT || 3000;
 
-app.configure(function() {
-  app.set('port', process.env.PORT || 3000);
-  app.set('views', __dirname + '/views');
-  app.set('view engine', 'jade');
-  app.use(express.favicon(path.join(__dirname, 'public', 'favicon.ico')));
-  app.use(express.logger('dev'));
-  app.use(express.json());
-  app.use(express.urlencoded());
-  app.use(express.methodOverride());
-  app.use(express.cookieParser());
-  app.use(express.session({ secret: 'secret' }));
-  app.use(passport.initialize());
-  app.use(passport.session());
-  app.use(app.router);
-  app.use(express.static(path.join(__dirname, 'public')));
+app.set('views', __dirname + '/views');
+app.set('view engine', 'jade');
+
+app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+app.use(logger('dev'));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded());
+app.use(cookieParser());
+app.use(session({ secret: 'secret' }));
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(express.static(path.join(__dirname, 'public')));
+
+app.use(function(err, req, res, next) {
+  res.status(err.status || 500);
+  res.render('error', {
+    message: err.message,
+    error:   err
+  });
 });
 
-app.configure('development', function(){
-  app.use(express.errorHandler());
-});
-
-app.get('/', routes.index);
-app.get('/catalog/amazon', routes.amazon);
-app.post('/checkout', routes.checkout);
+app.get('/',                 routes.index);
+app.get('/catalog/amazon',   routes.amazon);
+app.post('/checkout',        routes.checkout);
 app.delete('/checkin/:isbn', routes.checkin);
-app.post('/user', routes.user);
-app.get('/wishList', routes.wishList);
+app.post('/user',            routes.user);
+app.get('/wishList',         routes.wishList);
 
 app.get('/login',    passport.authenticate('github'));
 app.get('/callback', passport.authenticate('github', {
@@ -76,8 +81,10 @@ app.get('/logout', function(req, res) {
   res.redirect('/');
 });
 
-http.createServer(app).listen(app.get('port'), function(){
-  console.log("Express server listening on port " + app.get('port'));
+module.exports = app;
+
+app.listen(port, function(){
+  console.log("Express server listening on port " + port);
 });
 
 process.on('uncaughtException', function(err) {
