@@ -1,5 +1,8 @@
 # Book Catalog
 
+[![Quality](https://codeclimate.com/github/stoshiya/bookcatalog.png)](https://codeclimate.com/github/stoshiya/bookcatalog)
+[![Dependencies](https://david-dm.org/stoshiya/bookcatalog.png)](https://david-dm.org/stoshiya/bookcatalog)
+
 <http://bookcatalog.herokuapp.com>
 
 ## Getting Started
